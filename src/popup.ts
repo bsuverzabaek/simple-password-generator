@@ -102,6 +102,7 @@ const cbUppercase = document.getElementById("cb-uppercase") as HTMLInputElement;
 const cbLowercase = document.getElementById("cb-lowercase") as HTMLInputElement;
 const cbNumbers = document.getElementById("cb-numbers") as HTMLInputElement;
 const symbolCheckboxes = Array.from(document.querySelectorAll<HTMLInputElement>("[data-symbol]"));
+const cbSymbolsAll = document.getElementById("cb-symbols-all") as HTMLInputElement;
 const cbFullWidth = document.getElementById("cb-fullwidth") as HTMLInputElement;
 const strengthBar = document.getElementById("strength-bar") as HTMLDivElement;
 const strengthLabel = document.getElementById("strength-label") as HTMLDivElement;
@@ -149,6 +150,12 @@ function generate(): void {
   clearCopyFeedback();
 }
 
+function syncSymbolsAll(): void {
+  const checkedCount = symbolCheckboxes.filter((cb) => cb.checked).length;
+  cbSymbolsAll.checked = checkedCount === symbolCheckboxes.length;
+  cbSymbolsAll.indeterminate = checkedCount > 0 && checkedCount < symbolCheckboxes.length;
+}
+
 function clearCopyFeedback(): void {
   if (copyFeedbackTimer !== null) clearTimeout(copyFeedbackTimer);
   copyFeedback.textContent = "";
@@ -176,12 +183,25 @@ lengthNumber.addEventListener("change", () => {
 });
 
 [cbUppercase, cbLowercase, cbNumbers].forEach((cb) => {
-  cb.addEventListener("change", () => updateStrengthUI(getOptions()));
+  cb.addEventListener("change", () => {
+    updateStrengthUI(getOptions());
+    generate();
+  });
 });
 
 symbolCheckboxes.forEach((cb) => {
-  cb.addEventListener("change", () => updateStrengthUI(getOptions()));
+  cb.addEventListener("change", () => {
+    syncSymbolsAll();
+    updateStrengthUI(getOptions());
+    generate();
+  });
 });
+
+cbSymbolsAll.addEventListener("change", () => {
+  symbolCheckboxes.forEach((cb) => { cb.checked = cbSymbolsAll.checked; });
+  updateStrengthUI(getOptions());
+  generate();
+})
 
 cbFullWidth.addEventListener("change", () => {
   currentPassword = cbFullWidth.checked ? toFullWidth(rawPassword) : rawPassword;

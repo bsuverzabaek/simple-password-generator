@@ -231,9 +231,30 @@ input[type="number"]:focus {
   gap: 8px;
 }
 
+.symbols-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .symbols-label {
   font-size: 13px;
   color: #9090aa;
+}
+
+.checkbox-label input[type="checkbox"]:indeterminate + .checkbox-custom {
+  background: #a78bfa;
+  border-color: #a78bfa;
+}
+
+.checkbox-label input[type="checkbox"]:indeterminate + .checkbox-custom::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 6px;
+  width: 8px;
+  height: 2px;
+  background: #0f0f13;
 }
 
 .symbols-grid {
@@ -287,12 +308,14 @@ input[type="number"]:focus {
   position: relative;
 }
 
-.checkbox-label input[type="checkbox"]:checked + .checkbox-custom {
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom,
+.symbol-item input[type="checkbox"]:checked + .checkbox-custom {
   background: #a78bfa;
   border-color: #a78bfa;
 }
 
-.checkbox-label input[type="checkbox"]:checked + .checkbox-custom::after {
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom::after,
+.symbol-item input[type="checkbox"]:checked + .checkbox-custom::after {
   content: "";
   position: absolute;
   left: 4px;

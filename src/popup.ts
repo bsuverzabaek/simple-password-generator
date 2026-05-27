@@ -3,65 +3,82 @@ interface PasswordOptions {
   uppercase: boolean;
   lowercase: boolean;
   numbers: boolean;
-  symbols: boolean;
+  symbols: string; // enabled symbol chars, empty = none
 }
 
 const CHARSETS = {
   uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
   lowercase: "abcdefghijklmnopqrstuvwxyz",
   numbers: "0123456789",
-  symbols: "!@#$%^&*()_+-=[]{}|;:,.<>?",
 } as const;
 
-// Rejection-sampling picks a random index in [0, max) without modulo bias.
-function randomIndex(max: number): number {
-  const limit = 256 - (256 % max);
-  const buf = new Uint8Array(1);
-  do {
-    crypto.getRandomValues(buf);
-  } while (buf[0] >= limit);
-  return buf[0] % max;
+const ALL_SYMBOLS = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+
+// Maps printable ASCII (0x21–0x7E) to their full-width Unicode equivalents.
+function toFullWidth(str: string): string {
+  return Array.from(str).map(ch => {
+    const code = ch.charCodeAt(0);
+    return code >= 0x21 && code <= 0x7E ? String.fromCharCode(code + 0xFEE0) : ch;
+  }).join("");
 }
 
-function shuffled(chars: string[]): string[] {
+// Batches crypto.getRandomValues calls; rejection-samples to avoid modulo bias.
+function makeRng(): (max: number) => number {
+  const buf = new Uint8Array(128);
+  let pos = buf.length;
+  return function (max: number): number {
+    const limit = 256 - (256 % max);
+    for (;;) {
+      if (pos >= buf.length) {
+        crypto.getRandomValues(buf);
+        pos = 0;
+      }
+      const v = buf[pos++];
+      if (v < limit) return v % max;
+    }
+  };
+}
+
+function shuffled(chars: string[], rng: (max: number) => number): string[] {
   const arr = [...chars];
   for (let i = arr.length - 1; i > 0; i--) {
-    const j = randomIndex(i + 1);
+    const j = rng(i + 1);
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
 }
 
 function generatePassword(opts: PasswordOptions): string {
-  const selected = (Object.keys(CHARSETS) as Array<keyof typeof CHARSETS>).filter(
-    (k) => opts[k]
-  );
+  const charsets: string[] = (Object.keys(CHARSETS) as Array<keyof typeof CHARSETS>)
+    .filter((k) => opts[k])
+    .map((k) => CHARSETS[k]);
+  if (opts.symbols) charsets.push(opts.symbols);
 
-  if (selected.length === 0) return "";
+  if (charsets.length === 0) return "";
 
-  const fullCharset = selected.map((k) => CHARSETS[k]).join("");
+  const rng = makeRng();
+  const fullCharset = charsets.join("");
   const chars: string[] = [];
 
   // Guarantee at least one character from each enabled charset.
-  for (const key of selected) {
-    const cs = CHARSETS[key];
-    chars.push(cs[randomIndex(cs.length)]);
+  for (const cs of charsets) {
+    chars.push(cs[rng(cs.length)]);
   }
 
   // Fill remaining positions from the combined charset.
   while (chars.length < opts.length) {
-    chars.push(fullCharset[randomIndex(fullCharset.length)]);
+    chars.push(fullCharset[rng(fullCharset.length)]);
   }
 
-  return shuffled(chars).join("");
+  return shuffled(chars, rng).join("");
 }
 
 // Entropy-based strength: bits = log2(charsetSize^length)
 function calcStrength(opts: PasswordOptions): { bits: number; label: string; color: string } {
-  const selected = (Object.keys(CHARSETS) as Array<keyof typeof CHARSETS>).filter(
-    (k) => opts[k]
-  );
-  const poolSize = selected.reduce((sum, k) => sum + CHARSETS[k].length, 0);
+  const poolSize =
+    (Object.keys(CHARSETS) as Array<keyof typeof CHARSETS>)
+      .filter((k) => opts[k])
+      .reduce((sum, k) => sum + CHARSETS[k].length, 0) + opts.symbols.length;
   if (poolSize === 0) return { bits: 0, label: "", color: "#3e3e54" };
 
   const bits = Math.log2(poolSize) * opts.length;
@@ -84,12 +101,16 @@ const lengthNumber = document.getElementById("length-number") as HTMLInputElemen
 const cbUppercase = document.getElementById("cb-uppercase") as HTMLInputElement;
 const cbLowercase = document.getElementById("cb-lowercase") as HTMLInputElement;
 const cbNumbers = document.getElementById("cb-numbers") as HTMLInputElement;
-const cbSymbols = document.getElementById("cb-symbols") as HTMLInputElement;
+const symbolCheckboxes = Array.from(document.querySelectorAll<HTMLInputElement>("[data-symbol]"));
+const cbFullWidth = document.getElementById("cb-fullwidth") as HTMLInputElement;
 const strengthBar = document.getElementById("strength-bar") as HTMLDivElement;
 const strengthLabel = document.getElementById("strength-label") as HTMLDivElement;
+const optionsSection = document.querySelector(".options") as HTMLDivElement;
+const optionsHeader = document.querySelector(".options-header") as HTMLDivElement;
 
 // ── State ───────────────────────────────────────────────────────────────────
 
+let rawPassword = "";
 let currentPassword = "";
 let copyFeedbackTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -101,7 +122,7 @@ function getOptions(): PasswordOptions {
     uppercase: cbUppercase.checked,
     lowercase: cbLowercase.checked,
     numbers: cbNumbers.checked,
-    symbols: cbSymbols.checked,
+    symbols: symbolCheckboxes.filter((cb) => cb.checked).map((cb) => cb.dataset.symbol!).join(""),
   };
 }
 
@@ -120,7 +141,8 @@ function updateStrengthUI(opts: PasswordOptions): void {
 
 function generate(): void {
   const opts = getOptions();
-  currentPassword = generatePassword(opts);
+  rawPassword = generatePassword(opts);
+  currentPassword = cbFullWidth.checked ? toFullWidth(rawPassword) : rawPassword;
   passwordOutput.textContent = currentPassword || "—";
   copyBtn.disabled = currentPassword.length === 0;
   updateStrengthUI(opts);
@@ -130,11 +152,16 @@ function generate(): void {
 function clearCopyFeedback(): void {
   if (copyFeedbackTimer !== null) clearTimeout(copyFeedbackTimer);
   copyFeedback.textContent = "";
+  copyFeedback.style.color = "";
 }
 
 // ── Event listeners ──────────────────────────────────────────────────────────
 
 generateBtn.addEventListener("click", generate);
+
+optionsHeader.addEventListener("click", () => {
+  optionsSection.classList.toggle("expanded");
+});
 
 lengthSlider.addEventListener("input", () => {
   lengthNumber.value = lengthSlider.value;
@@ -148,16 +175,27 @@ lengthNumber.addEventListener("change", () => {
   updateStrengthUI(getOptions());
 });
 
-[cbUppercase, cbLowercase, cbNumbers, cbSymbols].forEach((cb) => {
+[cbUppercase, cbLowercase, cbNumbers].forEach((cb) => {
   cb.addEventListener("change", () => updateStrengthUI(getOptions()));
+});
+
+symbolCheckboxes.forEach((cb) => {
+  cb.addEventListener("change", () => updateStrengthUI(getOptions()));
+});
+
+cbFullWidth.addEventListener("change", () => {
+  currentPassword = cbFullWidth.checked ? toFullWidth(rawPassword) : rawPassword;
+  passwordOutput.textContent = currentPassword || "—";
+  copyBtn.disabled = currentPassword.length === 0;
+  clearCopyFeedback();
 });
 
 copyBtn.addEventListener("click", async () => {
   if (!currentPassword) return;
   try {
     await navigator.clipboard.writeText(currentPassword);
+    clearCopyFeedback();
     copyFeedback.textContent = "Copied!";
-    if (copyFeedbackTimer !== null) clearTimeout(copyFeedbackTimer);
     copyFeedbackTimer = setTimeout(() => {
       copyFeedback.textContent = "";
     }, 2000);

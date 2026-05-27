@@ -28,7 +28,14 @@
     </div>
     <div id="strength-label" class="strength-label"></div>
 
+    <button id="generate-btn" class="generate-btn">Generate</button>
+
     <div class="options">
+      <div class="options-header">
+        Options
+        <svg class="options-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </div>
+      <div class="options-body">
       <div class="length-row">
         <label for="length-slider">Length</label>
         <div class="length-controls">
@@ -54,14 +61,44 @@
           Numbers <span class="sample">0–9</span>
         </label>
         <label class="checkbox-label">
-          <input type="checkbox" id="cb-symbols" />
+          <input type="checkbox" id="cb-fullwidth" />
           <span class="checkbox-custom"></span>
-          Symbols <span class="sample">!@#…</span>
+          Full-width <span class="sample">Ａ１</span>
         </label>
       </div>
+      <div class="symbols-section">
+        <span class="symbols-label">Symbols</span>
+        <div class="symbols-grid">
+          <label class="symbol-item"><input type="checkbox" data-symbol="!" /><span class="checkbox-custom"></span><span>!</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="@" /><span class="checkbox-custom"></span><span>@</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="#" /><span class="checkbox-custom"></span><span>#</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="$" /><span class="checkbox-custom"></span><span>$</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="%" /><span class="checkbox-custom"></span><span>%</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="^" /><span class="checkbox-custom"></span><span>^</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="&amp;" /><span class="checkbox-custom"></span><span>&amp;</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="*" /><span class="checkbox-custom"></span><span>*</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="(" /><span class="checkbox-custom"></span><span>(</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol=")" /><span class="checkbox-custom"></span><span>)</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="_" /><span class="checkbox-custom"></span><span>_</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="+" /><span class="checkbox-custom"></span><span>+</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="-" /><span class="checkbox-custom"></span><span>-</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="=" /><span class="checkbox-custom"></span><span>=</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="[" /><span class="checkbox-custom"></span><span>[</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="]" /><span class="checkbox-custom"></span><span>]</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="{" /><span class="checkbox-custom"></span><span>{</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="}" /><span class="checkbox-custom"></span><span>}</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="|" /><span class="checkbox-custom"></span><span>|</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol=";" /><span class="checkbox-custom"></span><span>;</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol=":" /><span class="checkbox-custom"></span><span>:</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="," /><span class="checkbox-custom"></span><span>,</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="." /><span class="checkbox-custom"></span><span>.</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="&lt;" /><span class="checkbox-custom"></span><span>&lt;</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="&gt;" /><span class="checkbox-custom"></span><span>&gt;</span></label>
+          <label class="symbol-item"><input type="checkbox" data-symbol="?" /><span class="checkbox-custom"></span><span>?</span></label>
+        </div>
+      </div>
+      </div>
     </div>
-
-    <button id="generate-btn" class="generate-btn">Generate</button>
   </div>
 
   <script src="src/popup.js"></script>

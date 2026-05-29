@@ -12,8 +12,6 @@ const CHARSETS = {
   numbers: "0123456789",
 } as const;
 
-const ALL_SYMBOLS = "!@#$%^&*()_+-=[]{}|;:,.<>?";
-
 // Maps printable ASCII (0x21–0x7E) to their full-width Unicode equivalents.
 function toFullWidth(str: string): string {
   return Array.from(str).map(ch => {
@@ -173,6 +171,7 @@ optionsHeader.addEventListener("click", () => {
 lengthSlider.addEventListener("input", () => {
   lengthNumber.value = lengthSlider.value;
   updateStrengthUI(getOptions());
+  generate();
 });
 
 lengthNumber.addEventListener("change", () => {
@@ -180,6 +179,7 @@ lengthNumber.addEventListener("change", () => {
   lengthNumber.value = String(clamped);
   lengthSlider.value = String(clamped);
   updateStrengthUI(getOptions());
+  generate();
 });
 
 [cbUppercase, cbLowercase, cbNumbers].forEach((cb) => {
@@ -201,7 +201,7 @@ cbSymbolsAll.addEventListener("change", () => {
   symbolCheckboxes.forEach((cb) => { cb.checked = cbSymbolsAll.checked; });
   updateStrengthUI(getOptions());
   generate();
-})
+});
 
 cbFullWidth.addEventListener("change", () => {
   currentPassword = cbFullWidth.checked ? toFullWidth(rawPassword) : rawPassword;
@@ -227,4 +227,7 @@ copyBtn.addEventListener("click", async () => {
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 
+if (cbSymbolsAll.checked) {
+  symbolCheckboxes.forEach((cb) => { cb.checked = true; });
+}
 generate();

@@ -47,6 +47,7 @@ h1 {
 .password-text {
   flex: 1;
   font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+  font-variant-ligatures: none;
   font-size: 13px;
   color: #e2e2e8;
   word-break: break-all;

@@ -1,0 +1,30 @@
+{
+  "extName":            { "message": "Password Generator" },
+  "extDescription":     { "message": "Generate cryptographically secure passwords" },
+  "extActionTitle":     { "message": "Password Generator" },
+  "headingTitle":       { "message": "Password Generator" },
+  "copyToClipboard":    { "message": "Copy to clipboard" },
+  "clickToCopy":        { "message": "Click to copy" },
+  "labelLength":        { "message": "Length" },
+  "btnGenerate":        { "message": "Generate" },
+  "optionsLabel":       { "message": "Options" },
+  "cbUppercase":        { "message": "Uppercase" },
+  "cbLowercase":        { "message": "Lowercase" },
+  "cbNumbers":          { "message": "Numbers" },
+  "cbFullWidth":        { "message": "Full-width" },
+  "symbolsLabel":       { "message": "Symbols" },
+  "symbolsAll":         { "message": "All" },
+  "strengthVeryWeak":   { "message": "Very Weak" },
+  "strengthWeak":       { "message": "Weak" },
+  "strengthFair":       { "message": "Fair" },
+  "strengthStrong":     { "message": "Strong" },
+  "strengthVeryStrong": { "message": "Very Strong" },
+  "strengthInfo": {
+    "message": "~$BITS$ bits of entropy",
+    "placeholders": {
+      "bits": { "content": "$1", "example": "72" }
+    }
+  },
+  "copied":    { "message": "Copied!" },
+  "copyFailed": { "message": "Copy failed — select manually" }
+}

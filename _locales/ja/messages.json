@@ -1,0 +1,30 @@
+{
+  "extName":            { "message": "パスワードジェネレーター" },
+  "extDescription":     { "message": "crypto.getRandomValues() を使ってパスワードをローカルで安全に生成します" },
+  "extActionTitle":     { "message": "パスワードジェネレーター" },
+  "headingTitle":       { "message": "パスワードジェネレーター" },
+  "copyToClipboard":    { "message": "クリップボードにコピー" },
+  "clickToCopy":        { "message": "クリックしてコピー" },
+  "labelLength":        { "message": "文字数" },
+  "btnGenerate":        { "message": "生成" },
+  "optionsLabel":       { "message": "オプション" },
+  "cbUppercase":        { "message": "大文字" },
+  "cbLowercase":        { "message": "小文字" },
+  "cbNumbers":          { "message": "数字" },
+  "cbFullWidth":        { "message": "全角" },
+  "symbolsLabel":       { "message": "記号" },
+  "symbolsAll":         { "message": "すべて" },
+  "strengthVeryWeak":   { "message": "非常に弱い" },
+  "strengthWeak":       { "message": "弱い" },
+  "strengthFair":       { "message": "普通" },
+  "strengthStrong":     { "message": "強い" },
+  "strengthVeryStrong": { "message": "非常に強い" },
+  "strengthInfo": {
+    "message": "エントロピー約$BITS$ビット",
+    "placeholders": {
+      "bits": { "content": "$1", "example": "72" }
+    }
+  },
+  "copied":    { "message": "コピーしました！" },
+  "copyFailed": { "message": "コピーに失敗しました — 手動で選択してください" }
+}

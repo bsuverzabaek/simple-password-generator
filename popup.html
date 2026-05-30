@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Password Generator</title>
+  <title data-i18n="headingTitle">Password Generator</title>
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Password Generator</h1>
+    <h1 data-i18n="headingTitle">Password Generator</h1>
 
     <div class="output-section">
       <div class="password-display">
-        <span id="password-output" class="password-text" title="Click to copy">—</span>
-        <button id="copy-btn" class="icon-btn" title="Copy to clipboard" disabled>
+        <span id="password-output" class="password-text" title="Click to copy" data-i18n-title="clickToCopy">—</span>
+        <button id="copy-btn" class="icon-btn" title="Copy to clipboard" data-i18n-title="copyToClipboard" disabled>
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -29,18 +29,18 @@
     <div id="strength-label" class="strength-label"></div>
 
     <div class="length-row">
-      <label for="length-slider">Length</label>
+      <label for="length-slider" data-i18n="labelLength">Length</label>
       <div class="length-controls">
         <input type="range" id="length-slider" min="8" max="64" value="16" />
         <input type="number" id="length-number" min="8" max="64" value="16" />
       </div>
     </div>
 
-    <button id="generate-btn" class="generate-btn">Generate</button>
+    <button id="generate-btn" class="generate-btn" data-i18n="btnGenerate">Generate</button>
 
     <div class="options">
       <div class="options-header">
-        Options
+        <span data-i18n="optionsLabel">Options</span>
         <svg class="options-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </div>
       <div class="options-body">
@@ -48,31 +48,31 @@
           <label class="checkbox-label">
             <input type="checkbox" id="cb-uppercase" checked />
             <span class="checkbox-custom"></span>
-            Uppercase <span class="sample">A–Z</span>
+            <span data-i18n="cbUppercase">Uppercase</span> <span class="sample">A–Z</span>
           </label>
           <label class="checkbox-label">
             <input type="checkbox" id="cb-lowercase" checked />
             <span class="checkbox-custom"></span>
-            Lowercase <span class="sample">a–z</span>
+            <span data-i18n="cbLowercase">Lowercase</span> <span class="sample">a–z</span>
           </label>
           <label class="checkbox-label">
             <input type="checkbox" id="cb-numbers" checked />
             <span class="checkbox-custom"></span>
-            Numbers <span class="sample">0–9</span>
+            <span data-i18n="cbNumbers">Numbers</span> <span class="sample">0–9</span>
           </label>
           <label class="checkbox-label">
             <input type="checkbox" id="cb-fullwidth" />
             <span class="checkbox-custom"></span>
-            Full-width <span class="sample">Ａ１</span>
+            <span data-i18n="cbFullWidth">Full-width</span> <span class="sample">Ａ１</span>
           </label>
         </div>
         <div class="symbols-section">
           <div class="symbols-header">
-            <span class="symbols-label">Symbols</span>
+            <span class="symbols-label" data-i18n="symbolsLabel">Symbols</span>
             <label class="checkbox-label">
               <input type="checkbox" id="cb-symbols-all" checked />
               <span class="checkbox-custom"></span>
-              All
+              <span data-i18n="symbolsAll">All</span>
             </label>
           </div>
           <div class="symbols-grid">

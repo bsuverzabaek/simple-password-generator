@@ -1,3 +1,30 @@
+declare namespace chrome {
+  namespace i18n {
+    function getMessage(messageName: string, substitutions?: string | string[]): string;
+  }
+}
+
+const FALLBACKS: Record<string, string> = {
+  strengthVeryWeak:   "Very Weak",
+  strengthWeak:       "Weak",
+  strengthFair:       "Fair",
+  strengthStrong:     "Strong",
+  strengthVeryStrong: "Very Strong",
+  strengthInfo:       "~$1 bits of entropy",
+  copied:             "Copied!",
+  copyFailed:         "Copy failed — select manually",
+};
+
+function i18n(key: string, subs?: string[]): string {
+  try {
+    return chrome.i18n.getMessage(key, subs) || FALLBACKS[key] || "";
+  } catch {
+    let msg = FALLBACKS[key] ?? "";
+    subs?.forEach((v, idx) => { msg = msg.replace(`$${idx + 1}`, v); });
+    return msg;
+  }
+}
+
 interface PasswordOptions {
   length: number;
   uppercase: boolean;
@@ -81,11 +108,22 @@ function calcStrength(opts: PasswordOptions): { bits: number; label: string; col
 
   const bits = Math.log2(poolSize) * opts.length;
 
-  if (bits < 40) return { bits, label: "Very Weak", color: "#ef4444" };
-  if (bits < 60) return { bits, label: "Weak", color: "#f97316" };
-  if (bits < 80) return { bits, label: "Fair", color: "#eab308" };
-  if (bits < 100) return { bits, label: "Strong", color: "#22c55e" };
-  return { bits, label: "Very Strong", color: "#34d399" };
+  if (bits < 40) return { bits, label: i18n("strengthVeryWeak"), color: "#ef4444" };
+  if (bits < 60) return { bits, label: i18n("strengthWeak"), color: "#f97316" };
+  if (bits < 80) return { bits, label: i18n("strengthFair"), color: "#eab308" };
+  if (bits < 100) return { bits, label: i18n("strengthStrong"), color: "#22c55e" };
+  return { bits, label: i18n("strengthVeryStrong"), color: "#34d399" };
+}
+
+function applyI18n(): void {
+  document.querySelectorAll<HTMLElement>("[data-i18n]").forEach(el => {
+    const msg = i18n(el.dataset.i18n!);
+    if (msg) el.textContent = msg;
+  });
+  document.querySelectorAll<HTMLElement>("[data-i18n-title]").forEach(el => {
+    const msg = i18n(el.dataset.i18nTitle!);
+    if (msg) el.title = msg;
+  });
 }
 
 // ── DOM references ──────────────────────────────────────────────────────────
@@ -134,7 +172,9 @@ function updateStrengthUI(opts: PasswordOptions): void {
   const pct = Math.min(100, (bits / 120) * 100);
   strengthBar.style.width = `${pct}%`;
   strengthBar.style.backgroundColor = color;
-  strengthLabel.textContent = label ? `${label} (~${Math.round(bits)} bits of entropy)` : "";
+  strengthLabel.textContent = label
+    ? `${label} (${i18n("strengthInfo", [Math.round(bits).toString()])})`
+    : "";
   strengthLabel.style.color = color;
 }
 
@@ -215,12 +255,12 @@ copyBtn.addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(currentPassword);
     clearCopyFeedback();
-    copyFeedback.textContent = "Copied!";
+    copyFeedback.textContent = i18n("copied");
     copyFeedbackTimer = setTimeout(() => {
       copyFeedback.textContent = "";
     }, 2000);
   } catch {
-    copyFeedback.textContent = "Copy failed — select manually";
+    copyFeedback.textContent = i18n("copyFailed");
     copyFeedback.style.color = "#f87171";
   }
 });
@@ -230,4 +270,6 @@ copyBtn.addEventListener("click", async () => {
 if (cbSymbolsAll.checked) {
   symbolCheckboxes.forEach((cb) => { cb.checked = true; });
 }
+
+applyI18n();
 generate();

@@ -17,18 +17,24 @@ jobs:
         run: npm ci
       - name: Compile Typescript
         run: npm run build
-      - name: Create ZIP
-        run: |
-          zip -r extension.zip . -i "manifest.json" \
-          "popup.html" \
-          "popup.css" \
-          "src/popup.js" \
-          "images" \
-          "_locales"
-      - name: Inspect ZIP
-        run: unzip -l extension.zip
+      #- name: Create ZIP
+        #run: |
+          #zip -r extension.zip . -i "manifest.json" \
+          #"popup.html" \
+          #"popup.css" \
+          #"src/popup.js" \
+          #"images" \
+          #"_locales"
+      #- name: Inspect ZIP
+        #run: unzip -l extension.zip
       - name: Upload ZIP artifact
         uses: actions/upload-artifact@v4
         with:
           name: extension
-          path: extension.zip
+          path: |
+            manifest.json
+            popup.html
+            popup.css
+            src/popup.js
+            images/
+            _locales/

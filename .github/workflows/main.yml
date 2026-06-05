@@ -32,9 +32,3 @@ jobs:
           "src/popup.js" \
           "images/*" \
           "_locales/*"
-      - name: Upload ZIP artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: extension
-          path: extension.zip
-          archive: false
